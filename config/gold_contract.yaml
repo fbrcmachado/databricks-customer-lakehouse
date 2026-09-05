@@ -1,0 +1,96 @@
+contract_version: "1.0.0"
+dataset: gold_bi_star_schema
+
+source:
+  table: customer_lakehouse.silver.sales_transactions
+  state_layer_name: silver_sales_transactions
+
+observability_gate:
+  latest_health_view: customer_lakehouse.observability.v_pipeline_health_latest
+  required_health_status: HEALTHY
+  require_matching_source_input_signature: true
+
+privacy:
+  forbidden_columns:
+    - email
+  customer_name_allowed: true
+
+model:
+  grain:
+    fact_sales: one row per valid transaction
+    dim_customer: one row per customer using latest observed attributes
+    dim_product: one row per SKU using latest observed attributes
+    dim_date: one row per calendar date between minimum and maximum order date
+
+  surrogate_keys:
+    customer_key:
+      strategy: xxhash64
+      source_columns: [id_cliente_final]
+    product_key:
+      strategy: xxhash64
+      source_columns: [sku]
+    date_key:
+      strategy: yyyyMMdd_integer
+      source_columns: [data_pedido]
+
+tables:
+  dim_date:
+    columns:
+      - date_key
+      - full_date
+      - year
+      - quarter
+      - month_number
+      - month_name
+      - year_month
+      - day_of_month
+      - day_of_week
+      - day_name
+      - is_weekend
+
+  dim_customer:
+    columns:
+      - customer_key
+      - customer_id
+      - customer_name
+      - city
+      - state
+      - last_order_date
+
+  dim_product:
+    columns:
+      - product_key
+      - sku
+      - product_name
+      - category
+      - last_order_date
+
+  fact_sales:
+    columns:
+      - transaction_id
+      - date_key
+      - customer_key
+      - product_key
+      - quantity
+      - unit_price
+      - discount_pct
+      - gross_amount
+      - discount_amount
+      - net_amount
+      - payment_method
+      - order_status
+      - sales_channel
+      - seller
+      - coupon
+
+quality:
+  require_fact_row_count_equals_silver: true
+  require_unique_transaction_id: true
+  require_unique_dimension_keys: true
+  require_referential_integrity: true
+  require_non_negative_amounts: true
+
+publication:
+  candidate_first: true
+  publish_fact_last: true
+  state_table: customer_lakehouse.observability.gold_publication_state
