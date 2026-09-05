@@ -1,0 +1,116 @@
+resources:
+  jobs:
+    e2e_pipeline_job:
+      name: customer-lakehouse-e2e-pipeline
+      queue:
+        enabled: true
+      max_concurrent_runs: 1
+
+      tasks:
+        - task_key: bronze_ingestion
+          notebook_task:
+            notebook_path: ../notebooks/01_bronze_ingestion.py
+            base_parameters:
+              catalog: ${var.catalog}
+              expected_file_count: "50"
+          environment_key: default
+          max_retries: 1
+          min_retry_interval_millis: 30000
+          retry_on_timeout: true
+          timeout_seconds: 3600
+
+        - task_key: silver_transformation
+          depends_on:
+            - task_key: bronze_ingestion
+          run_if: ALL_SUCCESS
+          notebook_task:
+            notebook_path: ../notebooks/02_silver_transformation.py
+            base_parameters:
+              catalog: ${var.catalog}
+              expected_file_count: "50"
+          environment_key: default
+          max_retries: 1
+          min_retry_interval_millis: 30000
+          retry_on_timeout: true
+          timeout_seconds: 3600
+
+        - task_key: observability_metrics
+          depends_on:
+            - task_key: silver_transformation
+          run_if: ALL_SUCCESS
+          notebook_task:
+            notebook_path: ../notebooks/03_observability_metrics.py
+            base_parameters:
+              catalog: ${var.catalog}
+          environment_key: default
+          max_retries: 1
+          min_retry_interval_millis: 30000
+          retry_on_timeout: true
+          timeout_seconds: 3600
+
+        - task_key: gold_bi
+          depends_on:
+            - task_key: observability_metrics
+          run_if: ALL_SUCCESS
+          notebook_task:
+            notebook_path: ../notebooks/04_gold_bi.py
+            base_parameters:
+              catalog: ${var.catalog}
+          environment_key: default
+          max_retries: 1
+          min_retry_interval_millis: 30000
+          retry_on_timeout: true
+          timeout_seconds: 3600
+
+        - task_key: gold_ml
+          depends_on:
+            - task_key: observability_metrics
+          run_if: ALL_SUCCESS
+          notebook_task:
+            notebook_path: ../notebooks/05_gold_ml.py
+            base_parameters:
+              catalog: ${var.catalog}
+          environment_key: ml
+          max_retries: 1
+          min_retry_interval_millis: 30000
+          retry_on_timeout: true
+          timeout_seconds: 3600
+
+        - task_key: governance
+          depends_on:
+            - task_key: gold_bi
+            - task_key: gold_ml
+          run_if: ALL_SUCCESS
+          notebook_task:
+            notebook_path: ../notebooks/06_governance_as_code.py
+            base_parameters:
+              catalog: ${var.catalog}
+          environment_key: default
+          max_retries: 1
+          min_retry_interval_millis: 30000
+          retry_on_timeout: true
+          timeout_seconds: 3600
+
+        - task_key: e2e_validation
+          depends_on:
+            - task_key: governance
+          run_if: ALL_SUCCESS
+          notebook_task:
+            notebook_path: ../notebooks/07_e2e_validation.py
+            base_parameters:
+              catalog: ${var.catalog}
+              expected_file_count: "50"
+          environment_key: default
+          max_retries: 0
+          timeout_seconds: 1800
+
+      environments:
+        - environment_key: default
+          spec:
+            environment_version: "2"
+            dependencies:
+              - "pyyaml==6.0.2"
+
+        - environment_key: ml
+          spec:
+            environment_version: "5"

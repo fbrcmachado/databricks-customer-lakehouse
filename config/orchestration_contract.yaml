@@ -1,0 +1,67 @@
+contract_version: "1.0.0"
+pipeline: customer_lakehouse_e2e
+
+execution:
+  expected_file_count: 50
+  max_concurrent_runs: 1
+  retry:
+    max_retries: 1
+    min_retry_interval_millis: 30000
+    retry_on_timeout: true
+  recovery_strategy: safe_full_rerun
+  scheduling: manual_for_now
+
+dag:
+  bronze_ingestion:
+    depends_on: []
+    notebook: notebooks/01_bronze_ingestion.py
+    state: customer_lakehouse.observability.ingestion_manifest
+
+  silver_transformation:
+    depends_on: [bronze_ingestion]
+    notebook: notebooks/02_silver_transformation.py
+    state: customer_lakehouse.observability.transformation_state
+
+  observability_metrics:
+    depends_on: [silver_transformation]
+    notebook: notebooks/03_observability_metrics.py
+    state: customer_lakehouse.observability.pipeline_metrics
+
+  gold_bi:
+    depends_on: [observability_metrics]
+    notebook: notebooks/04_gold_bi.py
+    state: customer_lakehouse.observability.gold_publication_state
+
+  gold_ml:
+    depends_on: [observability_metrics]
+    notebook: notebooks/05_gold_ml.py
+    state: customer_lakehouse.observability.ml_publication_state
+
+  governance:
+    depends_on: [gold_bi, gold_ml]
+    notebook: notebooks/06_governance_as_code.py
+    state: customer_lakehouse.observability.governance_state
+
+  e2e_validation:
+    depends_on: [governance]
+    notebook: notebooks/07_e2e_validation.py
+    state: none
+
+recovery:
+  rerun_safe: true
+  principles:
+    - Each persisted stage owns an input signature or content hash.
+    - Unchanged input is skipped rather than republished.
+    - Candidate datasets are validated before consumer-facing publication.
+    - Failed state persistence never licenses deletion of last known good data.
+    - A full workflow rerun is the default recovery path.
+    - Task retries are safe because stage execution is idempotent.
+
+validation:
+  require_active_source_files: 50
+  require_row_accounting: true
+  require_observability_health: HEALTHY
+  require_governance_status: PASS
+  require_gold_fact_matches_silver: true
+  require_ml_feature_segment_match: true
+  require_cross_layer_signature_alignment: true
