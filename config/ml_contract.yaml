@@ -1,0 +1,88 @@
+contract_version: "1.0.0"
+dataset: gold_ml_customer_segmentation
+
+source:
+  table: customer_lakehouse.silver.sales_transactions
+  state_layer_name: silver_sales_transactions
+
+observability_gate:
+  latest_health_view: customer_lakehouse.observability.v_pipeline_health_latest
+  required_health_status: HEALTHY
+  require_matching_source_input_signature: true
+
+privacy:
+  forbidden_columns:
+    - email
+    - nome_cliente
+    - cliente_nome
+    - customer_name
+  allow_pseudonymous_customer_key: true
+
+datasets:
+  customer_features:
+    grain: one row per customer
+    columns:
+      - customer_key
+      - as_of_date
+      - total_orders
+      - total_revenue
+      - avg_ticket
+      - recency_days
+      - distinct_products
+
+  product_metrics:
+    grain: one row per SKU
+    columns:
+      - product_key
+      - sku
+      - category
+      - total_orders
+      - units_sold
+      - total_revenue
+      - avg_unit_price
+      - distinct_customers
+
+  customer_segments:
+    grain: one row per customer
+    columns:
+      - customer_key
+      - segment_id
+      - total_orders
+      - total_revenue
+      - avg_ticket
+      - recency_days
+      - distinct_products
+
+model:
+  algorithm: KMeans
+  n_clusters: 4
+  random_state: 42
+  n_init: 20
+  scaler: StandardScaler
+  feature_columns:
+    - total_orders
+    - total_revenue
+    - avg_ticket
+    - recency_days
+    - distinct_products
+  cluster_id_semantics: categorical_only
+
+mlflow:
+  experiment_suffix: customer-lakehouse-customer-segmentation
+  log_model: true
+  register_model: false
+
+runtime:
+  serverless_environment_version: "5"
+
+quality:
+  require_unique_customer_key: true
+  require_unique_product_key: true
+  require_feature_segment_row_match: true
+  require_non_negative_features: true
+  require_exact_columns: true
+
+publication:
+  candidate_first: true
+  publish_segments_last: true
+  state_table: customer_lakehouse.observability.ml_publication_state
