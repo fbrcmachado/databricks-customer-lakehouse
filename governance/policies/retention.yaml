@@ -1,0 +1,21 @@
+policy_id: retention_policy
+enforcement_mode: report_only
+destructive_enforcement_enabled: false
+
+rules:
+  - asset_id: bronze.sales_raw
+    retention_days: 365
+  - asset_id: silver.sales_transactions
+    retention_days: 365
+  - asset_id: quarantine.sales_transactions_invalid
+    retention_days: 180
+  - asset_id: gold_bi.fact_sales
+    retention_days: 365
+  - asset_id: gold_ml.customer_features
+    retention_days: 180
+  - asset_id: gold_ml.customer_segments
+    retention_days: 180
+  - asset_id: observability.pipeline_metrics
+    retention_days: 365
+  - asset_id: observability.data_quality_metrics
+    retention_days: 365

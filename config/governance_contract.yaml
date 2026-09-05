@@ -1,0 +1,23 @@
+contract_version: "1.0.0"
+dataset: governance_as_code
+
+runtime:
+  expected_catalog: customer_lakehouse
+  fail_on_blocking_control: true
+  apply_uc_comments: true
+
+evidence:
+  require_current_observability_health: true
+  required_health_status: HEALTHY
+  minimum_valid_row_pct: 98.0
+  require_matching_silver_signature: true
+
+publication:
+  summary_table: customer_lakehouse.governance.governance_summary
+  checks_table: customer_lakehouse.governance.governance_checks
+  assets_table: customer_lakehouse.governance.catalog_assets
+  glossary_table: customer_lakehouse.governance.business_glossary
+  ownership_table: customer_lakehouse.governance.ownership
+  classifications_table: customer_lakehouse.governance.classifications
+  lineage_table: customer_lakehouse.governance.lineage_edges
+  state_table: customer_lakehouse.observability.governance_state

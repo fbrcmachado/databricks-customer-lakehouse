@@ -1,0 +1,50 @@
+levels:
+  public:
+    rank: 1
+  internal:
+    rank: 2
+  confidential:
+    rank: 3
+  restricted:
+    rank: 4
+
+column_classifications:
+  - asset_id: silver.sales_transactions
+    column: id_cliente_final
+    classification: confidential
+    pii_type: pseudonymous_identifier
+
+  - asset_id: silver.sales_transactions
+    column: nome_cliente
+    classification: confidential
+    pii_type: direct_identifier
+
+  - asset_id: silver.sales_transactions
+    column: email
+    classification: confidential
+    pii_type: direct_contact
+
+  - asset_id: gold_bi.dim_customer
+    column: customer_key
+    classification: confidential
+    pii_type: pseudonymous_identifier
+
+  - asset_id: gold_bi.dim_customer
+    column: customer_id
+    classification: confidential
+    pii_type: pseudonymous_identifier
+
+  - asset_id: gold_bi.dim_customer
+    column: customer_name
+    classification: confidential
+    pii_type: direct_identifier
+
+  - asset_id: gold_ml.customer_features
+    column: customer_key
+    classification: confidential
+    pii_type: pseudonymous_identifier
+
+  - asset_id: gold_ml.customer_segments
+    column: customer_key
+    classification: confidential
+    pii_type: pseudonymous_identifier

@@ -1,0 +1,19 @@
+policy_id: pii_layer_policy
+blocking: true
+
+rules:
+  - rule_id: PII001
+    description: Direct email/contact fields are forbidden from Gold BI.
+    asset_prefix: gold_bi.
+    forbidden_columns:
+      - email
+
+  - rule_id: PII002
+    description: Direct names and contact fields are forbidden from Gold ML.
+    asset_prefix: gold_ml.
+    forbidden_columns:
+      - email
+      - nome_cliente
+      - cliente_nome
+      - customer_name
+      - customer_email

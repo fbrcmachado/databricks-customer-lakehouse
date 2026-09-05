@@ -1,0 +1,8 @@
+policy_id: silver_quality_sla
+blocking: true
+
+asset_id: silver.sales_transactions
+minimum_valid_row_pct: 98.0
+required_health_status: HEALTHY
+require_exact_row_accounting: true
+require_file_count_ok: true

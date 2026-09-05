@@ -1,0 +1,108 @@
+assets:
+  - asset_id: bronze.sales_raw
+    object_name: customer_lakehouse.bronze.sales_raw
+    object_type: table
+    domain: sales
+    owner_role: data_engineering
+    steward_role: data_engineering
+    classification: confidential
+    description: Raw transaction payload and technical lineage from immutable Landing files.
+
+  - asset_id: silver.sales_transactions
+    object_name: customer_lakehouse.silver.sales_transactions
+    object_type: table
+    domain: sales
+    owner_role: data_engineering
+    steward_role: data_engineering
+    classification: confidential
+    description: Canonical, typed and quality-approved sales transactions.
+
+  - asset_id: quarantine.sales_transactions_invalid
+    object_name: customer_lakehouse.quarantine.sales_transactions_invalid
+    object_type: table
+    domain: sales
+    owner_role: data_engineering
+    steward_role: data_engineering
+    classification: confidential
+    description: Invalid business records with explicit data-quality errors.
+
+  - asset_id: gold_bi.dim_date
+    object_name: customer_lakehouse.gold_bi.dim_date
+    object_type: table
+    domain: analytics
+    owner_role: analytics_engineering
+    steward_role: data_engineering
+    classification: internal
+    description: Calendar dimension for BI consumption.
+
+  - asset_id: gold_bi.dim_customer
+    object_name: customer_lakehouse.gold_bi.dim_customer
+    object_type: table
+    domain: analytics
+    owner_role: analytics_engineering
+    steward_role: data_engineering
+    classification: confidential
+    description: Customer dimension for BI without direct contact data.
+
+  - asset_id: gold_bi.dim_product
+    object_name: customer_lakehouse.gold_bi.dim_product
+    object_type: table
+    domain: analytics
+    owner_role: analytics_engineering
+    steward_role: data_engineering
+    classification: internal
+    description: Product dimension for BI consumption.
+
+  - asset_id: gold_bi.fact_sales
+    object_name: customer_lakehouse.gold_bi.fact_sales
+    object_type: table
+    domain: analytics
+    owner_role: analytics_engineering
+    steward_role: data_engineering
+    classification: internal
+    description: Transaction-grain fact table for Power BI.
+
+  - asset_id: gold_ml.customer_features
+    object_name: customer_lakehouse.gold_ml.customer_features
+    object_type: table
+    domain: data_science
+    owner_role: data_science
+    steward_role: data_engineering
+    classification: confidential
+    description: Pseudonymous customer behavioral features for machine learning.
+
+  - asset_id: gold_ml.product_metrics
+    object_name: customer_lakehouse.gold_ml.product_metrics
+    object_type: table
+    domain: data_science
+    owner_role: data_science
+    steward_role: data_engineering
+    classification: internal
+    description: Product-level machine-learning metrics.
+
+  - asset_id: gold_ml.customer_segments
+    object_name: customer_lakehouse.gold_ml.customer_segments
+    object_type: table
+    domain: data_science
+    owner_role: data_science
+    steward_role: data_engineering
+    classification: confidential
+    description: Pseudonymous KMeans customer segmentation output.
+
+  - asset_id: observability.pipeline_metrics
+    object_name: customer_lakehouse.observability.pipeline_metrics
+    object_type: table
+    domain: platform
+    owner_role: data_engineering
+    steward_role: data_engineering
+    classification: internal
+    description: Persisted pipeline-level health and quality snapshots.
+
+  - asset_id: observability.data_quality_metrics
+    object_name: customer_lakehouse.observability.data_quality_metrics
+    object_type: table
+    domain: platform
+    owner_role: data_engineering
+    steward_role: data_engineering
+    classification: internal
+    description: Rule-level data-quality metrics.

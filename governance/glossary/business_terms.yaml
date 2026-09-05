@@ -1,0 +1,35 @@
+terms:
+  - term: Transaction
+    definition: A unique valid sales transaction represented by id_transacao.
+    domain: sales
+    related_assets:
+      - silver.sales_transactions
+      - gold_bi.fact_sales
+
+  - term: Customer
+    definition: A buyer identified operationally by id_cliente_final and pseudonymously downstream where required.
+    domain: sales
+    related_assets:
+      - silver.sales_transactions
+      - gold_bi.dim_customer
+      - gold_ml.customer_features
+
+  - term: Net Revenue
+    definition: Quantity multiplied by unit price after applying discount percentage.
+    domain: analytics
+    related_assets:
+      - gold_bi.fact_sales
+      - gold_ml.customer_features
+      - gold_ml.product_metrics
+
+  - term: Data Quality Valid Percentage
+    definition: Percentage of Bronze rows published to Silver after business-quality validation.
+    domain: platform
+    related_assets:
+      - observability.pipeline_metrics
+
+  - term: Customer Segment
+    definition: Categorical KMeans cluster assignment; segment identifiers are not ordinal rankings.
+    domain: data_science
+    related_assets:
+      - gold_ml.customer_segments

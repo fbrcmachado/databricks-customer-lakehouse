@@ -1,0 +1,28 @@
+domains:
+  sales:
+    description: Transactional sales data domain.
+    owner_role: data_engineering
+    steward_role: data_engineering
+
+  analytics:
+    description: Curated analytical serving domain.
+    owner_role: analytics_engineering
+    steward_role: data_engineering
+
+  data_science:
+    description: Privacy-aware machine-learning data products.
+    owner_role: data_science
+    steward_role: data_engineering
+
+  platform:
+    description: Operational metadata, quality and platform evidence.
+    owner_role: data_engineering
+    steward_role: data_engineering
+
+roles:
+  data_engineering:
+    description: Engineering ownership for ingestion, quality, transformation and platform controls.
+  analytics_engineering:
+    description: Analytical model ownership for BI-serving assets.
+  data_science:
+    description: Machine-learning ownership for feature and segmentation products.

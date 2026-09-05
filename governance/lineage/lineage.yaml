@@ -1,0 +1,44 @@
+edges:
+  - from: bronze.sales_raw
+    to: silver.sales_transactions
+    transformation: Canonicalization, typing and data-quality validation.
+
+  - from: bronze.sales_raw
+    to: quarantine.sales_transactions_invalid
+    transformation: Invalid business rows routed with quality errors.
+
+  - from: silver.sales_transactions
+    to: gold_bi.dim_date
+    transformation: Calendar generation from valid order-date range.
+
+  - from: silver.sales_transactions
+    to: gold_bi.dim_customer
+    transformation: Latest observed customer attributes with deterministic surrogate key.
+
+  - from: silver.sales_transactions
+    to: gold_bi.dim_product
+    transformation: Latest observed product attributes with deterministic surrogate key.
+
+  - from: silver.sales_transactions
+    to: gold_bi.fact_sales
+    transformation: Transaction-grain analytical measures and deterministic foreign keys.
+
+  - from: silver.sales_transactions
+    to: gold_ml.customer_features
+    transformation: Customer behavioral feature aggregation.
+
+  - from: silver.sales_transactions
+    to: gold_ml.product_metrics
+    transformation: Product performance aggregation.
+
+  - from: gold_ml.customer_features
+    to: gold_ml.customer_segments
+    transformation: StandardScaler plus KMeans segmentation.
+
+  - from: silver.sales_transactions
+    to: observability.pipeline_metrics
+    transformation: Pipeline-level row accounting and health evidence.
+
+  - from: quarantine.sales_transactions_invalid
+    to: observability.data_quality_metrics
+    transformation: Rule-level failure aggregation.
