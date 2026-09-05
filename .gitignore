@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.venv/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Databricks local state
+.databricks/
+.bundle/
+
+# Coverage / build
+.coverage
+htmlcov/
+build/
+dist/
+
+# Local source data - never commit raw customer files
+data/
+source/
+*.csv
+
+# Secrets
+*.pem
+*.key
