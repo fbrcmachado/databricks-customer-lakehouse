@@ -1,0 +1,13 @@
+resources:
+  jobs:
+    bronze_ingestion_job:
+      name: customer-lakehouse-bronze-ingestion
+      queue:
+        enabled: true
+      tasks:
+        - task_key: bronze_ingestion
+          notebook_task:
+            notebook_path: ../notebooks/01_bronze_ingestion.py
+            base_parameters:
+              catalog: ${var.catalog}
+              expected_file_count: "50"

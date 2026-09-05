@@ -1,0 +1,15 @@
+bundle:
+  name: databricks-customer-lakehouse
+
+include:
+  - resources/*.yml
+
+variables:
+  catalog:
+    description: Unity Catalog catalog used by the project.
+    default: customer_lakehouse
+
+targets:
+  dev:
+    mode: development
+    default: true
