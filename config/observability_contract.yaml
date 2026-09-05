@@ -1,0 +1,15 @@
+contract_version: "1.0.0"
+dataset: customer_lakehouse_observability
+
+quality:
+  expected_file_count: 50
+  minimum_valid_row_pct: 98.0
+  require_exact_row_accounting: true
+
+health:
+  healthy_status: HEALTHY
+  degraded_status: DEGRADED
+  critical_status: CRITICAL
+
+metrics:
+  include_zero_failure_rules: true
