@@ -1,0 +1,22 @@
+resources:
+  jobs:
+    silver_transformation_job:
+      name: customer-lakehouse-silver-transformation
+      queue:
+        enabled: true
+
+      tasks:
+        - task_key: silver_transformation
+          notebook_task:
+            notebook_path: ../notebooks/02_silver_transformation.py
+            base_parameters:
+              catalog: ${var.catalog}
+              expected_file_count: "50"
+          environment_key: default
+
+      environments:
+        - environment_key: default
+          spec:
+            environment_version: "2"
+            dependencies:
+              - "pyyaml==6.0.2"

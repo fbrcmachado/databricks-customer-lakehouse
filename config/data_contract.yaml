@@ -1,0 +1,136 @@
+contract_version: "1.0.0"
+dataset: sales_transactions
+
+source:
+  table: customer_lakehouse.bronze.sales_raw
+  grain: one row per source CSV record
+
+targets:
+  silver: customer_lakehouse.silver.sales_transactions
+  quarantine: customer_lakehouse.quarantine.sales_transactions_invalid
+
+quality:
+  minimum_valid_row_pct: 98.0
+
+columns:
+  id_transacao:
+    type: string
+    required: true
+    aliases: [cod_transacao]
+
+  id_cliente_final:
+    type: string
+    required: true
+    aliases: [customer_id]
+
+  data_pedido:
+    type: date
+    required: true
+    aliases: [dt_pedido]
+
+  nome_cliente:
+    type: string
+    required: true
+    aliases: [cliente_nome]
+    classification: pii
+
+  email:
+    type: string
+    required: false
+    aliases: []
+    classification: pii
+
+  sku:
+    type: string
+    required: true
+    aliases: []
+
+  produto:
+    type: string
+    required: true
+    aliases: []
+
+  categoria:
+    type: string
+    required: true
+    aliases: []
+
+  quantidade:
+    type: integer
+    required: true
+    aliases: [qtd]
+
+  preco_unitario:
+    type: decimal(18,2)
+    required: true
+    aliases: [valor_unitario]
+
+  desconto_pct:
+    type: decimal(9,4)
+    required: false
+    aliases: []
+    semantic: percentage_points
+
+  forma_pagamento:
+    type: string
+    required: true
+    aliases: [pagamento]
+
+  status_pedido:
+    type: string
+    required: true
+    aliases: [status]
+
+  canal_venda:
+    type: string
+    required: false
+    aliases: [canal]
+
+  cidade:
+    type: string
+    required: false
+    aliases: []
+
+  uf:
+    type: string
+    required: false
+    aliases: []
+
+  vendedor:
+    type: string
+    required: false
+    aliases: []
+
+  cupom:
+    type: string
+    required: false
+    aliases: []
+
+quality_rules:
+  Q001:
+    name: missing_transaction_id
+    description: id_transacao must be present and non-blank.
+  Q002:
+    name: missing_customer_id
+    description: id_cliente_final must be present and non-blank.
+  Q003:
+    name: invalid_order_date
+    description: data_pedido must parse as ISO yyyy-MM-dd or Brazilian dd/MM/yyyy.
+  Q004:
+    name: invalid_quantity
+    description: quantidade must be an integer greater than zero.
+  Q005:
+    name: invalid_unit_price
+    description: preco_unitario must be a valid non-negative decimal.
+  Q006:
+    name: duplicate_transaction_id
+    description: id_transacao must be unique across the active Bronze snapshot.
+  Q007:
+    name: missing_required_business_value
+    description: Required descriptive/business attributes must be non-blank.
+  Q008:
+    name: invalid_discount
+    description: desconto_pct, when provided, must normalize to 0 through 100 percentage points.
+  Q009:
+    name: alias_conflict
+    description: Canonical and alias values for the same attribute must not disagree on a row.
