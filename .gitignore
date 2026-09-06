@@ -35,3 +35,6 @@ source/
 # Secrets
 *.pem
 *.key
+# Phase 14 hardening
+*.pbix
+*.pyc

@@ -1,0 +1,10 @@
+# Repository text normalization.
+# Existing history is intentionally not rewritten by Phase 14.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.zip binary
+*.pbix binary

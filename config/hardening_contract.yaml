@@ -1,0 +1,56 @@
+contract_version: "1.0.0"
+dataset: project_delivery_hardening
+
+repository:
+  default_branch: main
+  require_clean_worktree_before_release: true
+  prohibit_pbix_in_git: true
+  prohibit_literal_secrets: true
+  enforce_future_lf_normalization: true
+
+ci:
+  provider: github_actions
+  triggers:
+    - pull_request
+    - push_main
+  python_version: "3.12"
+  package_manager: uv
+  required_gates:
+    - locked_dependency_sync
+    - unit_and_contract_tests
+    - repository_integrity
+    - python_static_compile
+
+cd:
+  current_environment: dev_free_edition
+  trigger: workflow_dispatch
+  current_authentication: personal_access_token_github_secret
+  deploy_bundle: true
+  validate_bundle: true
+  optional_e2e_run: true
+
+production_target:
+  implemented: false
+  required_authentication: github_oidc_workload_identity_federation
+  require_service_principal: true
+  require_environment_approval: true
+  require_separate_prod_catalog: true
+  require_non_personal_owner: true
+
+release_gate:
+  require_full_test_suite: true
+  require_repository_integrity: true
+  require_bundle_validation: true
+  require_e2e_validation: true
+  require_pipeline_health: HEALTHY
+  require_governance_status: PASS
+  require_clean_git_status: true
+
+known_enterprise_gaps:
+  - no_separate_prod_workspace_or_catalog_yet
+  - current_dev_authentication_is_personal
+  - no_automated_alert_delivery
+  - no_disaster_recovery_test
+  - no_load_or_cost_benchmark
+  - no_production_service_principal
+  - no_formal_release_approval_environment
