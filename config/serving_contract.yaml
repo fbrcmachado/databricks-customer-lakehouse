@@ -1,0 +1,55 @@
+contract_version: "1.0.0"
+dataset: sql_warehouse_powerbi_serving
+
+warehouse:
+  default_name: Serverless Starter Warehouse
+  catalog: customer_lakehouse
+  schema: gold_bi
+
+power_bi:
+  recommended_connectivity_mode: Import
+  development_authentication: OAuth
+  production_authentication: ServicePrincipalOAuth
+  primary_objects:
+    - dim_date
+    - dim_customer
+    - dim_product
+    - fact_sales
+  optional_views:
+    - v_sales_enriched
+    - v_sales_monthly
+
+relationships:
+  - from_table: dim_date
+    from_column: date_key
+    to_table: fact_sales
+    to_column: date_key
+    cardinality: one_to_many
+    cross_filter: single
+
+  - from_table: dim_customer
+    from_column: customer_key
+    to_table: fact_sales
+    to_column: customer_key
+    cardinality: one_to_many
+    cross_filter: single
+
+  - from_table: dim_product
+    from_column: product_key
+    to_table: fact_sales
+    to_column: product_key
+    cardinality: one_to_many
+    cross_filter: single
+
+privacy:
+  forbidden_columns:
+    - email
+  require_no_direct_email_in_serving_views: true
+
+validation:
+  require_non_empty_fact: true
+  require_unique_transaction_id: true
+  require_no_orphan_date_keys: true
+  require_no_orphan_customer_keys: true
+  require_no_orphan_product_keys: true
+  require_view_fact_row_match: true

@@ -1,0 +1,29 @@
+// Starter measures for the Power BI semantic model.
+// Create these as measures, not calculated columns.
+
+Net Revenue =
+SUM ( fact_sales[net_amount] )
+
+Gross Revenue =
+SUM ( fact_sales[gross_amount] )
+
+Discount Amount =
+SUM ( fact_sales[discount_amount] )
+
+Orders =
+DISTINCTCOUNT ( fact_sales[transaction_id] )
+
+Customers =
+DISTINCTCOUNT ( fact_sales[customer_key] )
+
+Units Sold =
+SUM ( fact_sales[quantity] )
+
+Average Ticket =
+DIVIDE ( [Net Revenue], [Orders] )
+
+Average Revenue per Customer =
+DIVIDE ( [Net Revenue], [Customers] )
+
+Discount Rate =
+DIVIDE ( [Discount Amount], [Gross Revenue] )
